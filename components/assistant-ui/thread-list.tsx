@@ -2,6 +2,7 @@ import type { FC } from "react";
 import {
   ThreadListItemPrimitive,
   ThreadListPrimitive,
+  useAssistantApi,
   useAssistantState,
 } from "@assistant-ui/react";
 import { ArchiveIcon, PlusIcon } from "lucide-react";
@@ -19,12 +20,24 @@ export const ThreadList: FC = () => {
   );
 };
 
+import { useAssistantRuntime } from "@assistant-ui/react";
+
 const ThreadListNew: FC = () => {
+ const api = useAssistantApi();
+
+ const handleNewThread = () => {
+      api.threads().switchToNewThread();
+ }
+
   return (
     <ThreadListPrimitive.New asChild>
       <Button
         className="aui-thread-list-new flex items-center justify-start gap-1 rounded-lg px-2.5 py-2 text-start hover:bg-muted data-active:bg-muted"
         variant="ghost"
+        onClick={(e) => {
+          e.preventDefault();
+          handleNewThread();
+        }}
       >
         <PlusIcon />
         New Thread
