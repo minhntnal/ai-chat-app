@@ -13,14 +13,16 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { deleteAgent, getAgents } from '@/lib/agents';
-import { Agent } from '@/lib/agents';
+import { deleteAgent, getAgents, addAgent, Agent } from '@/lib/agents';
+import AgentForm from '@/components/assistant-ui/AgentForm';
+import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog';
 import { useEffect, useState } from 'react';
 
 export default function AgentsPage() {
   const [agents, setAgents] = useState<Agent[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [isFormOpen, setIsFormOpen] = useState(false);
 
   useEffect(() => {
     const fetchAgents = async () => {
@@ -40,6 +42,19 @@ export default function AgentsPage() {
 
     fetchAgents();
   }, []);
+
+  const handleAddAgent = (name: string, endpoint: string) => {
+    const newAgent: Agent = {
+      id: crypto.randomUUID(), // Generate a unique ID
+      name,
+      endpoint,
+      model: "default-model", // Provide a default model
+      description: "Default description",
+    };
+    addAgent(newAgent);
+    setAgents([...agents, newAgent]);
+    setIsFormOpen(false);
+  };
 
   const handleDeleteAgent = async (id: string) => {
     if (window.confirm('Are you sure you want to delete this agent?')) {
@@ -70,10 +85,16 @@ export default function AgentsPage() {
         </Link>
 
       <div className="mb-4 flex justify-end">
-        {/* Add Agent Button - Placeholder for now */}
-        <Button onClick={() => alert('Add Agent functionality not yet implemented')}>
-          Add Agent
-        </Button>
+        <Dialog open={isFormOpen} onOpenChange={setIsFormOpen}>
+          <DialogTrigger asChild>
+            <Button>
+              Add Agent
+            </Button>
+          </DialogTrigger>
+          <DialogContent>
+            <AgentForm onAddAgent={handleAddAgent} onClose={() => setIsFormOpen(false)} />
+          </DialogContent>
+        </Dialog>
       </div>
 
       <Table>
@@ -81,6 +102,7 @@ export default function AgentsPage() {
           <TableRow>
             <TableHead>Name</TableHead>
             <TableHead>Model</TableHead>
+            <TableHead>Endpoint</TableHead>
             <TableHead>Description</TableHead>
             <TableHead>Actions</TableHead>
           </TableRow>
@@ -88,7 +110,7 @@ export default function AgentsPage() {
         <TableBody>
           {agents.length === 0 ? (
             <TableRow>
-              <TableCell colSpan={4} className="text-center">
+              <TableCell colSpan={5} className="text-center">
                 No agents found.
               </TableCell>
             </TableRow>
@@ -97,6 +119,7 @@ export default function AgentsPage() {
               <TableRow key={agent.id}>
                 <TableCell>{agent.name}</TableCell>
                 <TableCell>{agent.model}</TableCell>
+                <TableCell>{agent.endpoint}</TableCell>
                 <TableCell>{agent.description}</TableCell>
                 <TableCell>
                   <Button

@@ -7,9 +7,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
-import AgentForm from "./AgentForm";
-import { Agent, getAgents, addAgent } from "@/lib/agents";
-import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
+import { Agent, getAgents } from "@/lib/agents";
 
 interface AgentSelectorProps {
   onAgentSelect: (agent: Agent | null) => void;
@@ -21,7 +19,6 @@ const AgentSelector: React.FC<AgentSelectorProps> = ({
   currentAgent,
 }) => {
   const [agents, setAgents] = useState<Agent[]>([]);
-  const [isFormOpen, setIsFormOpen] = useState(false);
 
   useEffect(() => {
     const loadedAgents = getAgents();
@@ -32,20 +29,6 @@ const AgentSelector: React.FC<AgentSelectorProps> = ({
       onAgentSelect(null);
     }
   }, []);
-
-  const handleAddAgent = (name: string, endpoint: string) => {
-    const newAgent: Agent = {
-      id: crypto.randomUUID(), // Generate a unique ID
-      name,
-      endpoint,
-      model: "default-model", // Provide a default model
-      description: "Default description",
-    };
-    addAgent(newAgent);
-    setAgents([...agents, newAgent]);
-    onAgentSelect(newAgent);
-    setIsFormOpen(false);
-  };
  
   return (
     <div className="flex items-center gap-2">
@@ -71,16 +54,6 @@ const AgentSelector: React.FC<AgentSelectorProps> = ({
           ))}
         </SelectContent>
       </Select>
-      <Dialog open={isFormOpen} onOpenChange={setIsFormOpen}>
-        <DialogTrigger asChild>
-          <Button variant="outline" onClick={() => setIsFormOpen(true)}>
-            Add Agent
-          </Button>
-        </DialogTrigger>
-        <DialogContent>
-          <AgentForm onAddAgent={handleAddAgent} onClose={() => setIsFormOpen(false)} />
-        </DialogContent>
-      </Dialog>
     </div>
   );
 };
