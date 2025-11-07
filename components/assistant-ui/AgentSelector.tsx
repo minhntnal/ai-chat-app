@@ -34,13 +34,19 @@ const AgentSelector: React.FC<AgentSelectorProps> = ({
   }, []);
 
   const handleAddAgent = (name: string, endpoint: string) => {
-    const newAgent: Agent = { name, endpoint };
+    const newAgent: Agent = {
+      id: crypto.randomUUID(), // Generate a unique ID
+      name,
+      endpoint,
+      model: "default-model", // Provide a default model
+      description: "Default description",
+    };
     addAgent(newAgent);
     setAgents([...agents, newAgent]);
     onAgentSelect(newAgent);
     setIsFormOpen(false);
   };
-
+ 
   return (
     <div className="flex items-center gap-2">
       <Select
@@ -55,7 +61,11 @@ const AgentSelector: React.FC<AgentSelectorProps> = ({
         </SelectTrigger>
         <SelectContent>
           {agents.map((agent) => (
-            <SelectItem key={agent.name} value={agent.name}>
+            <SelectItem
+              key={agent.name}
+              value={agent.name}
+              onSelect={() => onAgentSelect(agent)}
+            >
               {agent.name}
             </SelectItem>
           ))}
