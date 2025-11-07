@@ -64,7 +64,7 @@ export default function AgentsPage() {
   return (
     <div className="container mx-auto p-4">
       <h1 className="text-2xl font-bold mb-4">Agents</h1>
-        <Link href="/assistant" className="flex items-center gap-2 text-lg font-semibold">
+        <Link href="/" className="flex items-center gap-2 text-lg font-semibold">
           <MessagesSquare className="h-6 w-6" />
           <span>Chat</span>
         </Link>
