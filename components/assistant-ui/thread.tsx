@@ -108,7 +108,7 @@ const ThreadWelcome: FC = () => {
           </m.div>
         </div>
       </div>
-      <ThreadSuggestions />
+      {/* <ThreadSuggestions /> */}
     </div>
   );
 };
